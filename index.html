@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snake Game</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snake Game with Firebase</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDKs (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
@@ -28,9 +28,9 @@
     <h2>Login or Register</h2>
     <form id="loginForm">
       <label for="loginUsername">Username:</label>
-      <input type="text" id="loginUsername" required>
+      <input type="text" id="loginUsername" required />
       <label for="loginPassword">Password:</label>
-      <input type="password" id="loginPassword" required>
+      <input type="password" id="loginPassword" required />
       <button type="submit">Login</button>
     </form>
   </div>
@@ -64,7 +64,7 @@
             <th>Rank</th>
             <th>Username</th>
             <th>Score</th>
-	    <th>Difficulty</th>
+            <th>Difficulty</th>
           </tr>
         </thead>
         <tbody id="highScoresBody"></tbody>
