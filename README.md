@@ -1,1 +1,1 @@
-https://sani0kk.github.io/-/
+https://sani0kk.github.io/Snake/
