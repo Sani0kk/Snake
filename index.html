@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loginContainer" class="card">
+    <h2>Login or Register</h2>
+    <form id="loginForm">
+      <label for="loginUsername">Username:</label>
+      <input type="text" id="loginUsername" required>
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="gameContainer" class="hidden">
+    <div class="menu">
+      <h1>Snake</h1>
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+      <div class="horizontal-buttons">
+        <button id="startButton">Start</button>
+        <button id="pauseButton" class="hidden">Pause</button>
+        <button id="restartButton" class="hidden">Restart</button>
+        <button id="helpButton">Help</button>
+        <button id="highScoresButton">High Scores</button>
+        <button id="saveButton">Save Data</button>
+      </div>
+    </div>
+
+    <canvas id="canvas" width="500" height="500"></canvas>
+
+    <div id="highScoresContainer" class="hidden card">
+      <h2>Top 10 High Scores</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Score</th>
+	    <th>Difficulty</th>
+          </tr>
+        </thead>
+        <tbody id="highScoresBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
