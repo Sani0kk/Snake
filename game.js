@@ -162,23 +162,33 @@ document.addEventListener("DOMContentLoaded", () => {
     scoresRef.push({ username, score, difficulty, timestamp: Date.now() });
   }
 
-  function displayHighScores() {
-    const db = firebase.database();
-    const scoresRef = db.ref("scores");
-    scoresRef.orderByChild("score").limitToLast(10).once("value", snapshot => {
-      const scores = [];
-      snapshot.forEach(child => {
-        scores.push(child.val());
-      });
-      scores.reverse();
-      highScoresBody.innerHTML = "";
-      scores.forEach((s, i) => {
-        const row = highScoresBody.insertRow();
-        row.innerHTML = `<td>${i + 1}</td><td>${s.username}</td><td>${s.score}</td><td>${s.difficulty}</td>`;
-      });
-      highScoresContainer.classList.remove("hidden");
+function displayHighScores() {
+  const db = firebase.database();
+  const scoresRef = db.ref("scores");
+  scoresRef.once("value", snapshot => {
+    const allScores = [];
+    snapshot.forEach(child => {
+      allScores.push(child.val());
     });
-  }
+
+    const diffRank = { hard: 0, medium: 1, easy: 2 };
+    allScores.sort((a, b) => {
+      if (diffRank[a.difficulty] !== diffRank[b.difficulty]) {
+        return diffRank[a.difficulty] - diffRank[b.difficulty];
+      }
+      return b.score - a.score;
+    });
+
+    const top10 = allScores.slice(0, 10);
+    highScoresBody.innerHTML = "";
+    top10.forEach((s, i) => {
+      const row = highScoresBody.insertRow();
+      row.innerHTML = `<td>${i + 1}</td><td>${s.username}</td><td>${s.score}</td><td>${s.difficulty}</td>`;
+    });
+    highScoresContainer.classList.remove("hidden");
+  });
+}
+
 
   loginForm.addEventListener("submit", e => {
     e.preventDefault();
