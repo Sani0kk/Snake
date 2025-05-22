@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Snake Game</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP9bKID9RqqqCIQ3F717MYTepvXanFB48",
+      authDomain: "snake-game-ec5c0.firebaseapp.com",
+      databaseURL: "https://snake-game-ec5c0-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "snake-game-ec5c0",
+      storageBucket: "snake-game-ec5c0.firebasestorage.app",
+      messagingSenderId: "401678064733",
+      appId: "1:401678064733:web:d7a0f44c906bbc330741b4",
+      measurementId: "G-HMXXJ4VFVP"
+    };
+    firebase.initializeApp(firebaseConfig);
 </head>
 <body>
   <div id="loginContainer" class="card">
