@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
@@ -22,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const highScoresContainer = document.getElementById("highScoresContainer");
   const highScoresBody = document.getElementById("highScoresBody");
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
   let currentUser = null;
   let intervalId;
   let isPaused = false;
@@ -91,18 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
   Snake.prototype.checkCollision = function (head) {
     const wallCollision = head.col === 0 || head.row === 0 ||
       head.col === widthInBlocks - 1 || head.row === heightInBlocks - 1;
-
     const selfCollision = this.segments.some(segment => head.equal(segment));
     return wallCollision || selfCollision;
   };
 
   Snake.prototype.setDirection = function (newDir) {
-    const opposites = {
-      up: "down",
-      down: "up",
-      left: "right",
-      right: "left"
-    };
+    const opposites = { up: "down", down: "up", left: "right", right: "left" };
     if (opposites[this.direction] !== newDir) this.nextDirection = newDir;
   };
 
@@ -123,17 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let snake = new Snake();
   let apple = new Apple();
 
-  const directions = {
-    37: "left",
-    38: "up",
-    39: "right",
-    40: "down"
-  };
+  const directions = { 37: "left", 38: "up", 39: "right", 40: "down" };
 
   document.addEventListener("keydown", e => {
+    if ([37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
     const newDirection = directions[e.keyCode];
     if (newDirection) snake.setDirection(newDirection);
-  });
+  }, { passive: false });
 
   function drawBorder() {
     ctx.fillStyle = "gray";
@@ -155,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText("Game Over", width / 2, height / 2);
-    if (currentUser) saveScore(currentUser.username, score);
+    if (currentUser) saveScore(currentUser.username, score, difficultySelect.value);
     setTimeout(displayHighScores, 1000);
   }
 
@@ -168,42 +156,35 @@ document.addEventListener("DOMContentLoaded", () => {
     drawBorder();
   }
 
-  function saveScore(username, score) {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ username, score, difficulty: difficultySelect.value });
-    const diffRank = { hard: 0, medium: 1, easy: 2 };
-    scores.sort((a, b) => {
-      if (diffRank[a.difficulty] !== diffRank[b.difficulty]) {
-      return diffRank[a.difficulty] - diffRank[b.difficulty];
-      }
-      return b.score - a.score;
-    });
-    if (scores.length > 10) scores.pop();
-    localStorage.setItem("scores", JSON.stringify(scores));
+  function saveScore(username, score, difficulty) {
+    const db = firebase.database();
+    const scoresRef = db.ref("scores");
+    scoresRef.push({ username, score, difficulty, timestamp: Date.now() });
   }
 
   function displayHighScores() {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    highScoresBody.innerHTML = "";
-    scores.forEach((s, i) => {
-      const row = highScoresBody.insertRow();
-      row.innerHTML = `<td>${i + 1}</td><td>${s.username}</td><td>${s.score}</td><td>${s.difficulty}</td>`;
+    const db = firebase.database();
+    const scoresRef = db.ref("scores");
+    scoresRef.orderByChild("score").limitToLast(10).once("value", snapshot => {
+      const scores = [];
+      snapshot.forEach(child => {
+        scores.push(child.val());
+      });
+      scores.reverse();
+      highScoresBody.innerHTML = "";
+      scores.forEach((s, i) => {
+        const row = highScoresBody.insertRow();
+        row.innerHTML = `<td>${i + 1}</td><td>${s.username}</td><td>${s.score}</td><td>${s.difficulty}</td>`;
+      });
+      highScoresContainer.classList.remove("hidden");
     });
-    highScoresContainer.classList.remove("hidden");
   }
 
   loginForm.addEventListener("submit", e => {
     e.preventDefault();
     const username = document.getElementById("loginUsername").value;
     const password = document.getElementById("loginPassword").value;
-    let user = users.find(u => u.username === username && u.password === password);
-    if (!user) {
-      user = { id: Date.now(), username, password };
-      users.push(user);
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Registered new user!");
-    }
-    currentUser = user;
+    currentUser = { username, password }; // локальна авторизація без зберігання
     loginContainer.classList.add("hidden");
     gameContainer.classList.remove("hidden");
   });
@@ -214,6 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startButton.classList.add("hidden");
     pauseButton.classList.remove("hidden");
     restartButton.classList.remove("hidden");
+    highScoresContainer.classList.add("hidden");
   });
 
   pauseButton.addEventListener("click", () => {
@@ -251,17 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   saveButton.addEventListener("click", () => {
-    let data = "Users:\n";
-    users.forEach(u => data += `ID: ${u.id}, Username: ${u.username}, Password: ${u.password}\n`);
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    data += "\nHigh Scores:\n";
-    scores.forEach((s, i) => data += `Rank: ${i + 1}, Username: ${s.username}, Score: ${s.score}\n`);
-    const blob = new Blob([data], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "game_data.txt";
-    a.click();
-    URL.revokeObjectURL(url);
+    alert("Scores are saved online via Firebase. No need to download manually.");
   });
 });
