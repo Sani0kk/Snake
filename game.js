@@ -156,12 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
     drawBorder();
   }
 
-  function saveScore(username, score, difficulty) {
-    const db = firebase.database();
-    const scoresRef = db.ref("scores");
-    scoresRef.push({ username, score, difficulty, timestamp: Date.now() });
-  }
-
 function displayHighScores() {
   const db = firebase.database();
   const scoresRef = db.ref("scores");
